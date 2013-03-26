@@ -1,6 +1,6 @@
 #------------------------------------------------------------------#
 # File: .zshrc ZSH resource file #
-# Version: 0.1.1 #
+# Version: 0.1.2 #
 # Author: Mike Pretzlaw <pretzlaw@gmail.com> #
 #------------------------------------------------------------------#
 
@@ -29,56 +29,58 @@ export LS_COLORS
 # Keybindings
 #------------------------------
 
-insert_sudo () { zle beginning-of-line; zle -U "sudo " }
-zle -N insert-sudo insert_sudo
-
+# create a zkbd compatible hash;
+# to add other keys to this hash, see: man 5 terminfo
 bindkey -v
 typeset -g -A key
-#bindkey '\e[3~' delete-char
-bindkey '\e[1~' beginning-of-line
-bindkey '\e[4~' end-of-line
-#bindkey '\e[2~' overwrite-mode
-#bindkey '^?' backward-delete-char
-bindkey '^[[1~' beginning-of-line
-bindkey '^[[5~' up-line-or-history
-bindkey '^[[3~' delete-char
-bindkey '^[[4~' end-of-line
-bindkey '^[[6~' down-line-or-history
-bindkey '^[[A' up-line-or-search
-bindkey '^[[D' backward-char
-bindkey '^[[B' down-line-or-search
-bindkey '^[[C' forward-char
-# for rxvt
-bindkey "\e[8~" end-of-line
-bindkey "\e[7~" beginning-of-line
-# for gnome-terminal
-bindkey "\eOH" beginning-of-line
-bindkey "\eOF" end-of-line
 
-# ALT S
+key[Home]=${terminfo[khome]}
+
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+
+# setup key accordingly
+[[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
+[[ -n "${key[End]}"     ]]  && bindkey  "${key[End]}"     end-of-line
+[[ -n "${key[Insert]}"  ]]  && bindkey  "${key[Insert]}"  overwrite-mode
+[[ -n "${key[Delete]}"  ]]  && bindkey  "${key[Delete]}"  delete-char
+[[ -n "${key[Up]}"      ]]  && bindkey  "${key[Up]}"      up-line-or-history
+[[ -n "${key[Down]}"    ]]  && bindkey  "${key[Down]}"    down-line-or-history
+[[ -n "${key[Left]}"    ]]  && bindkey  "${key[Left]}"    backward-char
+[[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
+
+# Finally, make sure the terminal is in application mode, when zle is
+# active. Only then are the values from $terminfo valid.
+if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
+    function zle-line-init () {
+        printf '%s' ${terminfo[smkx]}
+    }
+    function zle-line-finish () {
+        printf '%s' ${terminfo[rmkx]}
+    }
+    zle -N zle-line-init
+    zle -N zle-line-finish
+fi
+
+# insert sudo at beginning (CTRL+O)
+insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+zle -N insert-sudo insert_sudo
 bindkey "^O" insert-sudo
-
-#------------------------------
-# Alias stuff
-#------------------------------
-alias ls="ls --color -F"
-alias ll="ls --color -lh"
-
-urlencode() {
-  echo -n $* | od -A n -t x1 | sed 's/ /\%/g'
-}
-
-# Search google for the given keywords.
-function google {
-        $BROWSER "http://www.google.com/search?q=$( urlencode $* )"
-}
 
 #------------------------------
 # Comp stuff
 #------------------------------
 zmodload zsh/complist
-autoload -Uz compinit
+autoload -Uz compinit promptinit
 compinit
+promptinit
 zstyle :compinstall filename '${HOME}/.zshrc'
 
 # Faster! (?)
@@ -102,17 +104,20 @@ setopt menu_complete
 zstyle ':completion:*' ignore-parents parent pwd
 
 #- buggy
-#zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
-#zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
+# zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
+# zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 ##-/buggy
 #
-#zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+# zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 #
 #zstyle ':completion:*:*:kill:*' menu yes select
 #zstyle ':completion:*:kill:*' force-list always
 #
 #zstyle ':completion:*:*:killall:*' menu yes select
 #zstyle ':completion:*:killall:*' force-list always
+
+# autocompletion of command line switches for aliases
+setopt completealiases
 
 #------------------------------
 # Window title
@@ -149,13 +154,15 @@ setprompt () {
     done
     PR_NO_COLOR="%{$terminfo[sgr0]%}"
     
-    # Check the UID
-    if [[ $UID -ge 1000 ]]; then # normal user
-    eval PR_USER='${PR_GREEN}%n${PR_NO_COLOR}'
-    eval PR_USER_OP='${PR_GREEN}%#${PR_NO_COLOR}'
-    elif [[ $UID -eq 0 ]]; then # root
-    eval PR_USER='${PR_RED}%n${PR_NO_COLOR}'
-    eval PR_USER_OP='${PR_RED}%#${PR_NO_COLOR}'
+    # Check if we are normal user or not
+    if [[ $UID -ge 1000 ]]; then
+        # normal user
+        eval PR_USER='${PR_GREEN}%n${PR_NO_COLOR}'
+        eval PR_USER_OP='${PR_GREEN}%#${PR_NO_COLOR}'
+    elif [[ $UID -eq 0 ]]; then
+        # root
+        eval PR_USER='${PR_RED}%n${PR_NO_COLOR}'
+        eval PR_USER_OP='${PR_RED}%#${PR_NO_COLOR}'
     fi	
     
     # Check if we are on SSH or not
@@ -170,6 +177,19 @@ setprompt () {
 }
 setprompt
 
+
+#------------------------------
+# Alias stuff
+#------------------------------
+urlencode() {
+  echo -n $* | od -A n -t x1 | sed 's/ /\%/g'
+}
+
+# Search google for the given keywords.
+function google {
+        $BROWSER "http://www.google.com/search?q=$( urlencode $* )"
+}
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -179,10 +199,6 @@ if [ -f ~/.shell_aliases ]; then
     . ~/.shell_aliases
 fi
 
-if [ -f ~/.shell_aliases_cx ]; then
-    . ~/.shell_aliases_cx
-fi
-
-if [ -f ~/.shell_aliases_rmp ]; then
-    . ~/.shell_aliases_rmp
+if [ -f ~/.shell_aliases_local ]; then
+    . ~/.shell_aliases_local
 fi

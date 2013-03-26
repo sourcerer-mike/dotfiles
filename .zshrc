@@ -187,9 +187,9 @@ setprompt () {
     
     # Check if we are on SSH or not
     if [[ -n "$SSH_CLIENT" || -n "$SSH2_CLIENT" ]]; then
-    eval PR_HOST='${PR_RED}%M${PR_NO_COLOR}' #SSH
+    eval PR_HOST='${PR_RED}%m${PR_NO_COLOR}' #SSH
     else
-    eval PR_HOST='${PR_GREEN}%M${PR_NO_COLOR}' # no SSH
+    eval PR_HOST='${PR_GREEN}%m${PR_NO_COLOR}' # no SSH
     fi
     # set the prompt
     PS1=$'${PR_}${PR_USER}@${PR_HOST}:%~${vcs_info_msg_0_}${PR_USER_OP} '

@@ -89,7 +89,7 @@ promptinit
 zstyle :compinstall filename '${HOME}/.zshrc'
 
 # Faster! (?)
-#zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion::complete:*' use-cache 1
 
 # case insensitive completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -147,6 +147,21 @@ esac
 #------------------------------
 # Prompt
 #------------------------------
+
+# Initialize colors.
+autoload -U colors
+colors
+
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git cvs svn
+
+zstyle ':vcs_info:*' actionformats '@%F{2}%b%F{3}|%F{1}%a%F{5}%f '
+zstyle ':vcs_info:*' formats       '@%F{2}%b%F{5}%f '
+zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+precmd () { vcs_info }
+
+# Set the prompt.
 setprompt () {
     # load some modules
     autoload -U colors zsh/terminfo # Used in the colour alias below
@@ -177,10 +192,11 @@ setprompt () {
     eval PR_HOST='${PR_GREEN}%M${PR_NO_COLOR}' # no SSH
     fi
     # set the prompt
-    PS1=$'${PR_}${PR_USER}@${PR_HOST}:%~${PR_USER_OP} '
-    PS2=$'%_>'
+    PS1=$'${PR_}${PR_USER}@${PR_HOST}:%~${vcs_info_msg_0_}${PR_USER_OP} '
+    PS2=$'%_> '
 }
 setprompt
+
 
 
 #------------------------------

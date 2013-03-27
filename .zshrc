@@ -1,34 +1,39 @@
-#------------------------------------------------------------------#
-# File: .zshrc ZSH resource file #
-# Version: 0.1.2 #
-# Author: Mike Pretzlaw <pretzlaw@gmail.com> #
-#------------------------------------------------------------------#
+#
+# File: .zshrc ZSH resource file
+# Author: Mike Pretzlaw <pretzlaw@gmail.com>
+# Take care!
+#
 
-#------------------------------
+
+#
 # History stuff
-#------------------------------
+#
 HISTFILE=~/.bash_history
 HISTSIZE=1000
 SAVEHIST=1000
 KEYTIMEOUT=10
 
-#------------------------------
+
+#
 # Variables
-#------------------------------
+#
 export BROWSER="firefox"
 export EDITOR="nano"
 export PAGER="less"
 export PATH="${PATH}:${HOME}/bin"
 
-#-----------------------------
+
+#
 # Dircolors
-#-----------------------------
+# http://wiki.ubuntuusers.de/dircolors
+#
 LS_COLORS='rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:';
 export LS_COLORS
 
-#------------------------------
+
+#
 # Keybindings
-#------------------------------
+#
 
 # create a zkbd compatible hash;
 # to add other keys to this hash, see: man 5 terminfo
@@ -36,7 +41,6 @@ bindkey -v
 typeset -g -A key
 
 key[Home]=${terminfo[khome]}
-
 key[End]=${terminfo[kend]}
 key[Insert]=${terminfo[kich1]}
 key[Delete]=${terminfo[kdch1]}
@@ -44,8 +48,8 @@ key[Up]=${terminfo[kcuu1]}
 key[Down]=${terminfo[kcud1]}
 key[Left]=${terminfo[kcub1]}
 key[Right]=${terminfo[kcuf1]}
-key[PageUp]=${terminfo[kpp]}
-key[PageDown]=${terminfo[knp]}
+key[PageUp]="^[[5~"
+key[PageDown]="^[[6~"
 
 # setup key accordingly
 [[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
@@ -79,9 +83,10 @@ insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^O" insert-sudo
 
-#------------------------------
+
+#
 # Comp stuff
-#------------------------------
+#
 zmodload zsh/complist
 autoload -Uz compinit promptinit
 compinit
@@ -124,9 +129,10 @@ zstyle ':completion:*' ignore-parents parent pwd
 # autocompletion of command line switches for aliases
 setopt completealiases
 
-#------------------------------
+
+#
 # Window title
-#------------------------------
+#
 case $TERM in
     termite|*xterm*|rxvt|rxvt-unicode|rxvt-256color|rxvt-unicode-256color|(dt|k|E)term)
 precmd () { print -Pn "\e]0;[%n@%M][%~]%#\a" }
@@ -144,18 +150,18 @@ preexec () { print -Pn "\e]0;[%n@%M][%~]%# ($1)\a" }
 ;;
 esac
 
-#------------------------------
+
+#
 # Prompt
-#------------------------------
+#
 
 # Initialize colors.
 autoload -U colors
 colors
 
-
+# Version control
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git cvs svn
-
 zstyle ':vcs_info:*' actionformats '@%F{2}%b%F{3}|%F{1}%a%F{5}%f'
 zstyle ':vcs_info:*' formats       '@%F{2}%b%F{5}%f'
 zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
@@ -201,23 +207,13 @@ setprompt () {
 setprompt
 
 
-
-#------------------------------
-# Alias stuff
-#------------------------------
-urlencode() {
-  echo -n $* | od -A n -t x1 | sed 's/ /\%/g'
-}
-
-# Search google for the given keywords.
-function google {
-        $BROWSER "http://www.google.com/search?q=$( urlencode $* )"
-}
-
+#
 # Alias definitions.
+#
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
+#
 
 if [ -f ~/.shell_aliases ]; then
     . ~/.shell_aliases

@@ -7,7 +7,7 @@
 #------------------------------
 # History stuff
 #------------------------------
-HISTFILE=~/.histfile
+HISTFILE=~/.bash_history
 HISTSIZE=1000
 SAVEHIST=1000
 KEYTIMEOUT=10
@@ -176,21 +176,24 @@ setprompt () {
     
     # Check if we are normal user or not
     if [[ $UID -ge 1000 ]]; then
-        # normal user
+        # normal user: username and sign green
         eval PR_USER='${PR_GREEN}%n${PR_NO_COLOR}'
         eval PR_USER_OP='${PR_GREEN}%#${PR_NO_COLOR}'
     elif [[ $UID -eq 0 ]]; then
-        # root
+        # root: username and sign red
         eval PR_USER='${PR_RED}%n${PR_NO_COLOR}'
         eval PR_USER_OP='${PR_RED}%#${PR_NO_COLOR}'
     fi	
     
     # Check if we are on SSH or not
     if [[ -n "$SSH_CLIENT" || -n "$SSH2_CLIENT" ]]; then
-    eval PR_HOST='${PR_RED}%m${PR_NO_COLOR}' #SSH
+        # SSH: red host
+        eval PR_HOST='${PR_RED}%m${PR_NO_COLOR}'
     else
-    eval PR_HOST='${PR_GREEN}%m${PR_NO_COLOR}' # no SSH
+        #no ssh: green host
+        eval PR_HOST='${PR_GREEN}%m${PR_NO_COLOR}'
     fi
+
     # set the prompt
     PS1=$'${PR_}${PR_USER}@${PR_HOST}:%~${vcs_info_msg_0_}${PR_USER_OP} '
     PS2=$'%_> '

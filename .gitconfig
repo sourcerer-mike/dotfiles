@@ -25,6 +25,8 @@
 	reb = "!r() { git rebase -i HEAD~$1; }; r"
 	# Undo a `git push`
 	undopush = push -f origin HEAD^:master
+	# Search for a file
+	search = log --stat --all --grep
 
 [apply]
 	# Detect whitespace errors when applying a patch

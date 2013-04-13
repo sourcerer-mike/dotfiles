@@ -60,7 +60,6 @@ publish
 #
 *.esproj
 .cache
-Desktop.ini
 .DS_Store
 .tmproj
 Desktop.ini
@@ -105,4 +104,3 @@ nbproject
 # an empty .gitignore file in them)
 #
 !.gitignore
-

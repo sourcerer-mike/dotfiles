@@ -1,3 +1,12 @@
+# GitIgnore by Mike Pretzlaw
+# Add local stuff below or at the end:
+
+#
+# Local
+#
+
+# vendor
+
 #
 # Numerous always-ignore
 #
@@ -58,7 +67,7 @@ Desktop.ini
 
 # Thumbnail cache files
 ._*
-Thumbs.db
+[Tt]humbs.db
 
 # Files that might appear on external disks
 .Spotlight-V100

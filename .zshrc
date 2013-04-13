@@ -2,6 +2,8 @@
 # File: .zshrc ZSH resource file
 # Author: Mike Pretzlaw <pretzlaw@gmail.com>
 # Take care!
+# 
+# Use "chsh -s $(which zsh)" to make zsh default for current user.
 #
 
 

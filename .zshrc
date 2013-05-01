@@ -6,25 +6,6 @@
 # Use "chsh -s $(which zsh)" to make zsh default for current user.
 #
 
-
-#
-# History stuff
-#
-HISTFILE=~/.bash_history
-HISTSIZE=1000
-SAVEHIST=1000
-KEYTIMEOUT=10
-
-
-#
-# Variables
-#
-export BROWSER="firefox"
-export EDITOR="nano"
-export PAGER="less"
-export PATH="${PATH}:${HOME}/bin"
-
-
 #
 # Dircolors
 # http://wiki.ubuntuusers.de/dircolors
@@ -36,6 +17,8 @@ export LS_COLORS
 #
 # Keybindings
 #
+
+export KEYTIMEOUT=10
 
 # create a zkbd compatible hash;
 # to add other keys to this hash, see: man 5 terminfo

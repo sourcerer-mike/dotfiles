@@ -200,10 +200,6 @@ setprompt
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 #
 
-if [ -f ~/.shell_aliases ]; then
-    . ~/.shell_aliases
-fi
-
-if [ -f ~/.shell_aliases_local ]; then
-    . ~/.shell_aliases_local
+if [ -f ~/.aliases ]; then
+    . ~/.aliases
 fi

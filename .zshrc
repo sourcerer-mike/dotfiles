@@ -174,7 +174,7 @@ setprompt () {
         # root: username and sign red
         eval PR_USER='${PR_RED}%n${PR_NO_COLOR}'
         eval PR_USER_OP='${PR_RED}%#${PR_NO_COLOR}'
-    fi	
+    fi  
     
     # Check if we are on SSH or not
     if [[ -n "$SSH_CLIENT" || -n "$SSH2_CLIENT" ]]; then
@@ -202,4 +202,8 @@ setprompt
 
 if [ -f ~/.aliases ]; then
     . ~/.aliases
+fi
+
+if [ -f ~/.aliases_local ]; then
+    . ~/.aliases_local
 fi

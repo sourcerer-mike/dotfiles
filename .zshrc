@@ -68,6 +68,10 @@ insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^O" insert-sudo
 
+# insert exit
+insert_exit () { zle end-of-line; zle -U "exit" }
+zle -N insert-exit insert_exit
+bindkey "^X" insert-exit
 
 #
 # Comp stuff
